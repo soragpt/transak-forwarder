@@ -33,9 +33,16 @@ const missingParameterResponse = (parameterName: string) =>
 
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl
+
+  // Required query parameters
   const apiKey = searchParams.get("apiKey")
   const walletAddress = searchParams.get("walletAddress")
   const siloEngineAccountId = searchParams.get("silo")
+
+  // Optional query parameters
+  const fiatAmount = searchParams.get("fiatAmount")
+  const defaultFiatAmount = searchParams.get("defaultFiatAmount")
+  const defaultCryptoAmount = searchParams.get("defaultCryptoAmount")
 
   if (!apiKey) {
     return missingParameterResponse("apiKey")
@@ -55,10 +62,23 @@ export async function GET(req: NextRequest) {
 
   url.searchParams.set("network", "near")
   url.searchParams.set("apiKey", apiKey)
+  url.searchParams.set("disableWalletAddressForm", "true")
   url.searchParams.set(
     "walletAddress",
     await getForwarderAddress(targetAddress, siloEngineAccountId),
   )
+
+  if (fiatAmount) {
+    url.searchParams.set("fiatAmount", fiatAmount)
+  }
+
+  if (defaultFiatAmount) {
+    url.searchParams.set("defaultFiatAmount", defaultFiatAmount)
+  }
+
+  if (defaultCryptoAmount) {
+    url.searchParams.set("defaultCryptoAmount", defaultCryptoAmount)
+  }
 
   return NextResponse.redirect(url.href)
 }
