@@ -41,6 +41,7 @@ export async function GET(req: NextRequest) {
 
   // Optional query parameters
   const fiatAmount = searchParams.get("fiatAmount")
+  const fiatCurrency = searchParams.get("fiatCurrency")
   const defaultFiatAmount = searchParams.get("defaultFiatAmount")
   const defaultCryptoAmount = searchParams.get("defaultCryptoAmount")
 
@@ -70,6 +71,10 @@ export async function GET(req: NextRequest) {
 
   if (fiatAmount) {
     url.searchParams.set("fiatAmount", fiatAmount)
+  }
+
+  if (fiatCurrency) {
+    url.searchParams.set("fiatCurrency", fiatCurrency)
   }
 
   if (defaultFiatAmount) {
