@@ -1,0 +1,64 @@
+import { getAddress } from "ethers"
+import { NextRequest, NextResponse } from "next/server"
+import { forwarderApiClient } from "@/forwarder-api-client"
+
+const getForwarderAddress = async (
+  targetAddress: string,
+  targetNetwork: string,
+) => {
+  const { result: currentContractResult } =
+    await forwarderApiClient.getContract({
+      targetAddress,
+      targetNetwork,
+    })
+
+  if (currentContractResult.address) {
+    return currentContractResult.address
+  }
+
+  const { result: newContractResult } = await forwarderApiClient.createContract(
+    {
+      targetAddress,
+      targetNetwork,
+    },
+  )
+
+  return newContractResult.address
+}
+
+const missingParameterResponse = (parameterName: string) =>
+  new NextResponse(`The \`${parameterName}\` query parameter is required`, {
+    status: 400,
+  })
+
+export async function GET(req: NextRequest) {
+  const { searchParams } = req.nextUrl
+  const apiKey = searchParams.get("apiKey")
+  const walletAddress = searchParams.get("walletAddress")
+  const siloEngineAccountId = searchParams.get("silo")
+
+  if (!apiKey) {
+    return missingParameterResponse("apiKey")
+  }
+
+  if (!walletAddress) {
+    return missingParameterResponse("walletAddress")
+  }
+
+  if (!siloEngineAccountId) {
+    return missingParameterResponse("silo")
+  }
+
+  const targetAddress = getAddress(walletAddress)
+
+  const url = new URL("https://global.transak.com/")
+
+  url.searchParams.set("network", "near")
+  url.searchParams.set("apiKey", apiKey)
+  url.searchParams.set(
+    "walletAddress",
+    await getForwarderAddress(targetAddress, siloEngineAccountId),
+  )
+
+  return NextResponse.redirect(url.href)
+}
