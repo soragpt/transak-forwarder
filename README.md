@@ -26,6 +26,10 @@ So, a full URL would look something like:
 https://transak.auroracloud.dev?apiKey=mykey&silo=0x4e45415d.c.aurora&walletAddress=0x123
 ```
 
+We can also pass the optional `fiatAmount`, `fiatCurrency`, `defaultFiatAmount` and
+`defaultCryptoAmount` query parameters, as described in the
+[Transak docs](https://docs.transak.com/docs/pass-information-on-behalf-of-the-user-and-skip-screens#buy-amount).
+
 ## Local setup
 
 Install dependencies using [yarn](https://classic.yarnpkg.com/):
