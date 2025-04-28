@@ -66,6 +66,7 @@ export const forwarderApiClient = {
           fees_contract_id: FORWARDER_CONTRACT_ID,
           target_address: targetAddress,
           target_network: targetNetwork,
+          environment: "STAGING", // added here
         },
       },
     ),
